@@ -1,0 +1,19 @@
+# متطلبات نظام مرقاب
+
+# Computer Vision
+opencv-python>=4.8.0
+ultralytics>=8.0.0
+numpy>=1.24.0
+
+# Object Tracking
+filterpy>=1.4.5
+scipy>=1.10.0
+
+# Audio Alerts
+pygame>=2.5.0
+
+# GUI (built-in with Python)
+# tkinter - comes with Python
+
+# Additional dependencies
+pillow>=10.0.0
