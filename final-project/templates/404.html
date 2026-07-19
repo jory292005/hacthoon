@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}الصفحة غير موجودة — بَيِّن{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="error-emoji">🧭</div>
+  <h1>404</h1>
+  <p>الصفحة اللي تبحثين عنها مو موجودة، أو تم نقلها.</p>
+  <a href="{{ url_for('login') if not session.get('user_id') else url_for('dashboard') }}" class="btn-primary">العودة للرئيسية</a>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}إنشاء حساب — بَيِّن{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" class="auth-logo" alt="بَيِّن">
+    <h1>إنشاء حساب جديد</h1>
+    <p class="auth-sub">احفظي تقاريرك وارجعي لها في أي وقت</p>
+
+    <form method="POST" class="auth-form" novalidate>
+      <label>
+        <span>الاسم الكامل</span>
+        <input type="text" name="full_name" placeholder="مثال: سارة العتيبي" value="{{ full_name or '' }}" required>
+      </label>
+      <label>
+        <span>البريد الإلكتروني</span>
+        <input type="email" name="email" placeholder="name@example.com" value="{{ email or '' }}" required>
+      </label>
+      <label>
+        <span>كلمة المرور</span>
+        <input type="password" name="password" placeholder="6 أحرف على الأقل" required minlength="6">
+      </label>
+      <label>
+        <span>تأكيد كلمة المرور</span>
+        <input type="password" name="password_confirm" placeholder="أعيدي كتابة كلمة المرور" required minlength="6">
+      </label>
+      <button type="submit" class="btn-primary full">إنشاء الحساب</button>
+    </form>
+
+    <p class="auth-switch">عندك حساب بالفعل؟ <a href="{{ url_for('login') }}">سجّلي الدخول</a></p>
+  </div>
+</div>
+{% endblock %}

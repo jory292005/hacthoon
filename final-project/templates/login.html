@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}تسجيل الدخول — بَيِّن{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" class="auth-logo" alt="بَيِّن">
+    <h1>تسجيل الدخول</h1>
+    <p class="auth-sub">أدخلي بياناتك للوصول إلى تقاريرك المحفوظة</p>
+
+    <form method="POST" class="auth-form" novalidate>
+      <label>
+        <span>البريد الإلكتروني</span>
+        <input type="email" name="email" placeholder="name@example.com" value="{{ email or '' }}" required autofocus>
+      </label>
+      <label>
+        <span>كلمة المرور</span>
+        <input type="password" name="password" placeholder="••••••••" required>
+      </label>
+      <button type="submit" class="btn-primary full">دخول</button>
+    </form>
+
+    <p class="auth-switch">ما عندك حساب؟ <a href="{{ url_for('signup') }}">أنشئي حساباً جديداً</a></p>
+  </div>
+</div>
+{% endblock %}

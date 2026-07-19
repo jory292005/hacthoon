@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}بَيِّن — المدقق الذكي للعقود{% endblock %}</title>
+<link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="{% if show_splash %}has-splash{% endif %}">
+
+{% if show_splash %}
+<div id="splash" class="splash">
+  <div class="splash-glow"></div>
+  <div class="splash-content">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="بَيِّن" class="splash-logo">
+    <div class="splash-bar"><span></span></div>
+    <p class="splash-tag">كل بند، بيّن ومفهوم</p>
+  </div>
+</div>
+{% endif %}
+
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('dashboard') if session.get('user_id') else url_for('login') }}">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="بَيِّن">
+      <span>بَيِّن</span>
+    </a>
+
+    {% if session.get('user_id') %}
+    <nav class="topnav">
+      <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint=='dashboard' %}active{% endif %}">لوحة التحكم</a>
+      <a href="{{ url_for('audit') }}" class="{% if request.endpoint=='audit' %}active{% endif %}">تدقيق جديد</a>
+    </nav>
+    <div class="user-menu">
+      <span class="user-chip">👋 {{ session.get('user_name') }}</span>
+      <a href="{{ url_for('logout') }}" class="btn-ghost small">تسجيل الخروج</a>
+    </div>
+    {% else %}
+    <nav class="topnav">
+      <a href="{{ url_for('login') }}" class="{% if request.endpoint=='login' %}active{% endif %}">تسجيل الدخول</a>
+      <a href="{{ url_for('signup') }}" class="btn-primary small {% if request.endpoint=='signup' %}active{% endif %}">إنشاء حساب</a>
+    </nav>
+    {% endif %}
+  </header>
+
+  <div class="toast-stack" id="toastStack">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="toast toast-{{ category }}">
+          <span class="toast-icon">
+            {% if category == 'error' %}⚠{% elif category == 'success' %}✓{% else %}ℹ{% endif %}
+          </span>
+          <span class="toast-msg">{{ message }}</span>
+          <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+  </div>
+
+  <main class="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <span>© {{ current_year }} بَيِّن — المساعد الذكي لتدقيق العقود</span>
+  </footer>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
