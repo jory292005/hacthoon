@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}خطأ غير متوقع — بَيِّن{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="error-emoji">⚠️</div>
+  <h1>حدث خطأ غير متوقع</h1>
+  <p>واجهنا مشكلة فنية أثناء تنفيذ طلبك. حاول مرة أخرى، ولو استمرت المشكلة تواصل مع الدعم الفني.</p>
+  <a href="{{ url_for('login') if not session.get('user_id') else url_for('dashboard') }}" class="btn-primary">العودة للرئيسية</a>
+</div>
+{% endblock %}

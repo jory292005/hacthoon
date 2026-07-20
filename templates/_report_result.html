@@ -1,0 +1,98 @@
+<div class="result-wrap">
+
+  <div class="result-hero result-hero-{{ audit.overall_status }}">
+    <div class="score-gauge" style="--score:{{ audit.compliance_score }}">
+      <svg viewBox="0 0 120 120">
+        <circle class="gauge-track" cx="60" cy="60" r="52"></circle>
+        <circle class="gauge-fill" cx="60" cy="60" r="52"
+          style="stroke-dasharray: {{ (audit.compliance_score|int) * 3.267 }} 326.7"></circle>
+      </svg>
+      <div class="gauge-label">
+        <strong>{{ audit.compliance_score }}%</strong>
+        <span>الامتثال</span>
+      </div>
+    </div>
+
+    <div class="result-summary">
+      <span class="badge badge-status-{{ audit.overall_status }} lg">
+        {{ status_labels.get(audit.overall_status, audit.overall_status) }}
+      </span>
+      <h2>{{ audit.supplier_name }}</h2>
+      <div class="result-tags">
+        <span class="tag">نوع العقد: {{ contract_type_labels.get(audit.contract_type, audit.contract_type) or 'غير محدد' }}</span>
+        <span class="badge badge-risk-{{ audit.risk_level }}">مستوى الخطورة: {{ risk_labels.get(audit.risk_level, audit.risk_level) }}</span>
+        {% if audit.is_template %}<span class="tag tag-warning">⚠ نموذج/تعميم فارغ (قيم غير مكتملة)</span>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if audit.violations %}
+  <div class="section-card">
+    <div class="section-head">
+      <h3>المخالفات المكتشفة</h3>
+      <span class="count-pill">{{ audit.violations|length }}</span>
+    </div>
+    <div class="violations-list">
+      {% for v in audit.violations %}
+      <div class="violation-card sev-{{ v.severity }}">
+        <div class="violation-head">
+          <span class="sev-dot"></span>
+          <strong>{{ v.clause }}</strong>
+          <span class="badge badge-sev-{{ v.severity }}">{{ severity_labels.get(v.severity, v.severity) }}</span>
+        </div>
+        <p class="violation-desc">{{ v.description }}</p>
+        {% if v.recommendation %}
+        <p class="violation-rec"><span>💡 التوصية:</span> {{ v.recommendation }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="grid-2">
+    {% if audit.missing_clauses %}
+    <div class="section-card">
+      <div class="section-head"><h3>بنود مفقودة كلياً</h3></div>
+      <ul class="plain-list list-danger">
+        {% for m in audit.missing_clauses %}<li>{{ m }}</li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if audit.incomplete_clauses %}
+    <div class="section-card">
+      <div class="section-head"><h3>بنود غير مكتملة</h3></div>
+      <ul class="plain-list list-warning">
+        {% for c in audit.incomplete_clauses %}<li><strong>{{ c.clause }}:</strong> {{ c.note }}</li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if audit.strengths %}
+  <div class="section-card">
+    <div class="section-head"><h3>نقاط القوة</h3></div>
+    <ul class="plain-list list-success">
+      {% for s in audit.strengths %}<li>{{ s }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if audit.recommendations %}
+  <div class="section-card">
+    <div class="section-head"><h3>التوصيات العامة</h3></div>
+    <ul class="plain-list list-info">
+      {% for r in audit.recommendations %}<li>{{ r }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="download-bar">
+    {% if download_url %}
+      <a href="{{ download_url }}" class="btn-primary xl">⬇ تحميل التقرير الكامل PDF</a>
+    {% else %}
+      <span class="tag tag-warning">تعذّر توليد ملف PDF لهذا التدقيق — النتيجة أعلاه سليمة ومتاحة رغم ذلك.</span>
+    {% endif %}
+  </div>
+</div>

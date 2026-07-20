@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}لوحة التحكم — بَيِّن{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>مرحباً، {{ session.get('user_name') }} 👋</h1>
+    <p class="muted">هذا ملخص التدقيقات المحفوظة في حسابك</p>
+  </div>
+  <a href="{{ url_for('audit') }}" class="btn-primary">+ تدقيق عقد جديد</a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-value">{{ stats.total }}</span>
+    <span class="stat-label">إجمالي التقارير</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-value">{{ stats.avg_score }}%</span>
+    <span class="stat-label">متوسط نسبة الامتثال</span>
+  </div>
+  <div class="stat-card stat-danger">
+    <span class="stat-value">{{ stats.high_risk }}</span>
+    <span class="stat-label">عقود عالية الخطورة</span>
+  </div>
+  <div class="stat-card stat-success">
+    <span class="stat-value">{{ stats.passed }}</span>
+    <span class="stat-label">عقود مطابقة بالكامل</span>
+  </div>
+</div>
+
+<div class="section-card">
+  <div class="section-head">
+    <h2>التقارير المحفوظة</h2>
+  </div>
+
+  {% if reports %}
+  <div class="reports-table-wrap">
+    <table class="reports-table">
+      <thead>
+        <tr>
+          <th>المورد</th>
+          <th>نوع العقد</th>
+          <th>الحالة</th>
+          <th>نسبة الامتثال</th>
+          <th>مستوى الخطورة</th>
+          <th>التاريخ</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reports %}
+        <tr>
+          <td class="cell-strong">{{ r.supplier_name }}</td>
+          <td>{{ r.contract_type or '—' }}</td>
+          <td><span class="badge badge-status-{{ r.overall_status }}">{{ status_labels.get(r.overall_status, r.overall_status) }}</span></td>
+          <td>
+            <div class="mini-bar"><span style="width:{{ r.compliance_score }}%"></span></div>
+            {{ r.compliance_score }}%
+          </td>
+          <td><span class="badge badge-risk-{{ r.risk_level }}">{{ risk_labels.get(r.risk_level, r.risk_level) }}</span></td>
+          <td class="muted small">{{ r.created_at[:10] }}</td>
+          <td class="cell-actions">
+            <a href="{{ url_for('view_report', report_id=r.id) }}" class="btn-ghost tiny">عرض</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">📄</div>
+    <p>لا يوجد أي تقرير محفوظ بعد.</p>
+    <a href="{{ url_for('audit') }}" class="btn-primary">ابدأ أول تدقيق</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

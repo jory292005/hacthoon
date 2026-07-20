@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: bayyin
+    env: docker
+    plan: free
+    healthCheckPath: /login
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true

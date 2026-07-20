@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}تدقيق عقد جديد — بَيِّن{% endblock %}
+{% block content %}
+
+{% if not audit %}
+<div class="page-head">
+  <div>
+    <h1>تدقيق عقد جديد</h1>
+    <p class="muted">ارفع ملف العقد (PDF) وسيقوم النظام بتحليله واستخراج المخالفات آلياً</p>
+  </div>
+</div>
+
+<div class="section-card upload-card">
+  <form method="POST" enctype="multipart/form-data" id="auditForm" class="audit-form">
+    <label class="field">
+      <span>اسم المورد</span>
+      <input type="text" name="supplier_name" placeholder="مثال: شركة الرياض للتوريدات" value="{{ supplier_name or '' }}" required>
+    </label>
+
+    <label class="field">
+      <span>ملف العقد (PDF فقط)</span>
+      <div class="dropzone" id="dropzone">
+        <input type="file" name="contract_file" id="fileInput" accept="application/pdf" required>
+        <div class="dropzone-inner">
+          <div class="dropzone-icon">📎</div>
+          <p id="dropzoneText">اسحب ملف PDF هنا أو اضغط للاختيار</p>
+        </div>
+      </div>
+    </label>
+
+    <button type="submit" class="btn-primary full" id="submitBtn">
+      <span class="btn-text">بدء التدقيق</span>
+    </button>
+  </form>
+</div>
+
+{% else %}
+
+<div class="page-head">
+  <div>
+    <h1>نتيجة التدقيق</h1>
+    <p class="muted">تم تحليل العقد بنجاح — يمكنك مراجعة التفاصيل أدناه</p>
+  </div>
+  <a href="{{ url_for('audit') }}" class="btn-ghost">تدقيق عقد آخر</a>
+</div>
+
+{% include "_report_result.html" %}
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const form = document.getElementById('auditForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const dropzoneText = document.getElementById('dropzoneText');
+
+  if (fileInput) {
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        dropzoneText.textContent = '📄 ' + fileInput.files[0].name;
+        dropzone.classList.add('has-file');
+      }
+    });
+    ['dragover', 'dragleave', 'drop'].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        if (evt === 'dragover') dropzone.classList.add('dragging');
+        else dropzone.classList.remove('dragging');
+      });
+    });
+    dropzone.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        dropzoneText.textContent = '📄 ' + fileInput.files[0].name;
+        dropzone.classList.add('has-file');
+      }
+    });
+  }
+
+  if (form) {
+    form.addEventListener('submit', () => {
+      submitBtn.disabled = true;
+      submitBtn.classList.add('is-loading');
+      submitBtn.querySelector('.btn-text').textContent = 'جاري التحليل… قد يستغرق ذلك بضع ثوانٍ';
+    });
+  }
+</script>
+{% endblock %}
